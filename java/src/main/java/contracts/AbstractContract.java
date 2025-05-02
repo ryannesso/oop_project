@@ -7,11 +7,11 @@ import payments.ContractPaymentData;
 public abstract class AbstractContract {
 
     private final String contractNumber;
-    private final InsuranceCompany insurer;
-    private final Person policyHolder;
-    private final ContractPaymentData contractPaymentData;
-    private int coverageAmount;
-    private boolean isActive;
+    protected final InsuranceCompany insurer;
+    protected final Person policyHolder;
+    protected final ContractPaymentData contractPaymentData;
+    protected int coverageAmount;
+    protected boolean isActive;
 
     public AbstractContract(String contractNumber, InsuranceCompany insuranceCompany, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount, boolean isActive) {
         if(insuranceCompany == null || policyHolder == null || contractPaymentData == null || coverageAmount < 0) {

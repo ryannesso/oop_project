@@ -1,6 +1,7 @@
 package contracts;
 
 import company.InsuranceCompany;
+import objects.LegalForm;
 import objects.Person;
 import payments.ContractPaymentData;
 
@@ -11,8 +12,9 @@ public class MasterVehicleContract extends AbstractVehicleContract {
 
     public MasterVehicleContract(String contractNumber, InsuranceCompany insurer, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount, Person beneficiary, boolean isActive, LinkedHashSet<SingleVehicleContract> childContracts) {
         super(contractNumber, insurer, policyHolder, null, 0, beneficiary, isActive);
-        if(policyHolder.getLegalForm) {}
-        //todo finish LGEAL form for policyHolder
+        if(policyHolder.getLegalForm() == LegalForm.NATURAL) {
+            throw new IllegalArgumentException("Policy holder must be a legal person for MasterVehicleContract");
+        }
         this.childContracts = childContracts;
     }
 
@@ -20,8 +22,16 @@ public class MasterVehicleContract extends AbstractVehicleContract {
         return childContracts;
     }
 
-    void addChildContract(SingleVehicleContract childContract) {
+    void requestAdditionOfChildContract(SingleVehicleContract childContract) {
         childContracts.add(childContract);
+    }
+
+    public void setInactive() {
+        this.isActive = false;
+
+        for(SingleVehicleContract childContract : childContracts) {
+            childContract.setInactive();
+        }
     }
 
     //todo UML!!!!!!

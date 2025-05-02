@@ -1,4 +1,5 @@
 package objects;
 
-public class LegalForm {
+public enum LegalForm {
+    NATURAL, LEGAL;
 }
