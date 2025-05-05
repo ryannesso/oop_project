@@ -3,19 +3,19 @@ package contracts;
 import company.InsuranceCompany;
 import objects.LegalForm;
 import objects.Person;
-import payments.ContractPaymentData;
+import payment.ContractPaymentData;
 
 import java.util.LinkedHashSet;
 
 public class MasterVehicleContract extends AbstractVehicleContract {
     private final LinkedHashSet<SingleVehicleContract> childContracts;
 
-    public MasterVehicleContract(String contractNumber, InsuranceCompany insurer, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount, Person beneficiary, boolean isActive, LinkedHashSet<SingleVehicleContract> childContracts) {
-        super(contractNumber, insurer, policyHolder, null, 0, beneficiary, isActive);
+    public MasterVehicleContract(String contractNumber, InsuranceCompany insurer,Person beneficiary, Person policyHolder) {
+        super(contractNumber, insurer, beneficiary, policyHolder,null, 0);
         if(policyHolder.getLegalForm() == LegalForm.NATURAL) {
             throw new IllegalArgumentException("Policy holder must be a legal person for MasterVehicleContract");
         }
-        this.childContracts = childContracts;
+        this.childContracts = new LinkedHashSet<>();
     }
 
     public LinkedHashSet<SingleVehicleContract> getChildContracts() {

@@ -2,15 +2,16 @@ package contracts;
 
 import company.InsuranceCompany;
 import objects.Person;
-import payments.ContractPaymentData;
+import objects.Vehicle;
+import payment.ContractPaymentData;
 
 public abstract class AbstractVehicleContract extends AbstractContract {
 
 
     protected Person beneficiary;
 
-    public AbstractVehicleContract(String contractNumber, InsuranceCompany insurer, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount, Person beneficiary, boolean isActive) {
-        super(contractNumber, insurer, policyHolder, contractPaymentData, coverageAmount, isActive);
+    public AbstractVehicleContract(String contractNumber, InsuranceCompany insurer, Person beneficiary, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount) {
+        super(contractNumber, insurer, policyHolder, contractPaymentData, coverageAmount);
         validateBeneficiary(beneficiary, policyHolder);
         this.beneficiary = beneficiary;
 

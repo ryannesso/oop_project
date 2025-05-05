@@ -1,4 +1,4 @@
-package payments;
+package payment;
 
 public enum PremiumPaymentFrequency {
     ANNUAL(12), SEMI_ANNUAL(6), QUARTERLY(3), MONTHLY(1);

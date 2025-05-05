@@ -2,7 +2,7 @@ package contracts;
 
 import company.InsuranceCompany;
 import objects.Person;
-import payments.ContractPaymentData;
+import payment.ContractPaymentData;
 
 public abstract class AbstractContract {
 
@@ -13,8 +13,8 @@ public abstract class AbstractContract {
     protected int coverageAmount;
     protected boolean isActive;
 
-    public AbstractContract(String contractNumber, InsuranceCompany insuranceCompany, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount, boolean isActive) {
-        if(insuranceCompany == null || policyHolder == null || contractPaymentData == null || coverageAmount < 0) {
+    public AbstractContract(String contractNumber, InsuranceCompany insuranceCompany, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount) {
+        if(insuranceCompany == null || policyHolder == null || contractPaymentData == null || coverageAmount < 0 || contractNumber == null ||  contractNumber.isEmpty()) {
             throw new IllegalArgumentException("Invalid arguments");
         }
 
@@ -25,7 +25,6 @@ public abstract class AbstractContract {
         this.policyHolder = policyHolder;
         this.contractPaymentData = contractPaymentData;
         this.coverageAmount = coverageAmount;
-        this.isActive = isActive;
     }
 
     public String getContractNumber() {
