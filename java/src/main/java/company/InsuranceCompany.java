@@ -8,20 +8,25 @@ import objects.Person;
 import objects.Vehicle;
 import payment.ContractPaymentData;
 import payment.PaymentHandler;
+import payment.PaymentInstance;
 import payment.PremiumPaymentFrequency;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 public class InsuranceCompany {
-    private Set<AbstractContract> contracts = new HashSet<>();
-    private PaymentHandler handler;
+    private final Set<AbstractContract> contracts;
+    private final PaymentHandler handler;
     private LocalDateTime currentTime;
 
     public InsuranceCompany(LocalDateTime currentTime) {
+        if(currentTime == null) {
+            throw new IllegalArgumentException("currentTime");
+        }
         this.currentTime = currentTime;
+        this.contracts = new LinkedHashSet<>();
+        Map<AbstractContract, Set<PaymentInstance>> contractHistory = new LinkedHashMap<>();
+        this.handler = new PaymentHandler(contractHistory, this);
     }
     public LocalDateTime getCurrentTime() {
         return currentTime;
@@ -36,17 +41,22 @@ public class InsuranceCompany {
         return handler;
     }
     public SingleVehicleContract insureVehicle(String contractNumber, Person beneficiary, Person policyHolder, int proposedPremium, PremiumPaymentFrequency proposedPaymentFrequency, Vehicle vehicleToInsure) {
+        if(vehicleToInsure == null || proposedPaymentFrequency == null || currentTime == null) {
+            throw new IllegalArgumentException("Vehicle does not exist");
+        }
+        //todo throws for all exceptions
         for(AbstractContract contract : contracts) {
             if(contract.getContractNumber().equals(contractNumber)) {
                 throw new IllegalArgumentException("Contract already exists");
             }
         }
         double vehicleValue = vehicleToInsure.getOriginalValue();
-        if(proposedPremium < 0.02 * vehicleValue) {
+        int periods = 12 / proposedPaymentFrequency.getMonthsValue();
+        if(proposedPremium * periods < 0.02 * vehicleValue) {
             throw new IllegalArgumentException("Premium payment not enough");
         }
         ContractPaymentData contractPaymentData = new ContractPaymentData(proposedPremium, proposedPaymentFrequency, currentTime, 0);
-        if (proposedPremium < 0.02 * vehicleToInsure.getOriginalValue()) {
+        if (proposedPremium * periods < 0.02 * vehicleToInsure.getOriginalValue()) {
             throw new IllegalArgumentException("Proposed premium is less than the required 2% of the vehicle value");
         }
         int coverageAmount = vehicleToInsure.getOriginalValue() / 2;
@@ -117,14 +127,13 @@ public class InsuranceCompany {
         }
     }
     public void chargePremiumOnContract(AbstractContract contract) {
-        while(contract.getContractPaymentData().getNextPaymentTime().isEqual(currentTime) ||
-                contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime)) {
+        while(contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime)) {
             if(contract.getContractPaymentData().getNextPaymentTime().isEqual(currentTime) &&
                     contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime)) {
                 int balance = contract.getContractPaymentData().getOutstandingBalance();
                 balance += contract.getContractPaymentData().getPremium();
                 contract.getContractPaymentData().setPremium(balance);
-                contract.getContractPaymentData().updateNextPaymentTime(currentTime);
+                contract.getContractPaymentData().updateNextPaymentTime();
                 if(contract.getContractPaymentData().getNextPaymentTime().isAfter(currentTime)) {
                     break;
                 }

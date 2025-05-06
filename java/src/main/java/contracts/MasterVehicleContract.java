@@ -6,9 +6,10 @@ import objects.Person;
 import payment.ContractPaymentData;
 
 import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class MasterVehicleContract extends AbstractVehicleContract {
-    private final LinkedHashSet<SingleVehicleContract> childContracts;
+    private final Set<SingleVehicleContract> childContracts;
 
     public MasterVehicleContract(String contractNumber, InsuranceCompany insurer,Person beneficiary, Person policyHolder) {
         super(contractNumber, insurer, beneficiary, policyHolder,null, 0);
@@ -18,11 +19,20 @@ public class MasterVehicleContract extends AbstractVehicleContract {
         this.childContracts = new LinkedHashSet<>();
     }
 
-    public LinkedHashSet<SingleVehicleContract> getChildContracts() {
+    public Set<SingleVehicleContract> getChildContracts() {
         return childContracts;
     }
 
-    void requestAdditionOfChildContract(SingleVehicleContract childContract) {
+    @Override
+    public boolean isActive() {
+        boolean ok = this.childContracts.stream().anyMatch(AbstractContract::isActive);
+        if(!ok) {
+            return false;
+        }
+        return super.isActive();
+    }
+
+    public void requestAdditionOfChildContract(SingleVehicleContract childContract) {
         childContracts.add(childContract);
     }
 
@@ -36,6 +46,6 @@ public class MasterVehicleContract extends AbstractVehicleContract {
 
     //todo UML!!!!!!
 
-
+    //todo откл подсказки
 
 }

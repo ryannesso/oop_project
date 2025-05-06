@@ -7,7 +7,7 @@ import payment.ContractPaymentData;
 import java.util.Set;
 
 public class TravelContract extends AbstractContract {
-    private Set<Person> insuredPerson;
+    private Set<Person> insuredPersons;
 
     public TravelContract(String contractNumber, InsuranceCompany insuranceCompany, Person person, ContractPaymentData contractPaymentData, int coverageAmount, Set<Person> personsToInsure) {
         super(contractNumber, insuranceCompany, person, contractPaymentData, coverageAmount);
@@ -17,9 +17,9 @@ public class TravelContract extends AbstractContract {
         if(contractPaymentData == null) {
             throw new IllegalArgumentException("Null ContractPaymentData");
         }
-        this.insuredPerson = personsToInsure;
+        this.insuredPersons = personsToInsure;
     }
-    public Set<Person> getInsuredPerson() {
-        return insuredPerson;
+    public Set<Person> getInsuredPersons() {
+        return insuredPersons;
     }
 }

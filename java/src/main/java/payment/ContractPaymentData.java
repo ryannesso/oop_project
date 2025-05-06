@@ -45,8 +45,7 @@ public class ContractPaymentData {
     public LocalDateTime getNextPaymentTime() {
         return nextPaymentTime;
     }
-    public void updateNextPaymentTime(LocalDateTime nextPaymentTime) {
-        int addmonths = premiumPaymentFrequency.getMonthsValue();
-        this.nextPaymentTime = this.nextPaymentTime.plusMonths(addmonths);
+    public void updateNextPaymentTime() {
+        nextPaymentTime = nextPaymentTime.plusMonths(premiumPaymentFrequency.getMonthsValue());
     }
 }
