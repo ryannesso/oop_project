@@ -3,6 +3,7 @@ package contracts;
 import company.InsuranceCompany;
 import objects.Person;
 import payment.ContractPaymentData;
+import payment.PaymentHandler;
 
 public abstract class AbstractContract {
 
@@ -11,10 +12,10 @@ public abstract class AbstractContract {
     protected final Person policyHolder;
     protected final ContractPaymentData contractPaymentData;
     protected int coverageAmount;
-    protected boolean isActive;
+    protected boolean isActive = true;
 
     public AbstractContract(String contractNumber, InsuranceCompany insuranceCompany, Person policyHolder, ContractPaymentData contractPaymentData, int coverageAmount) {
-        if(insuranceCompany == null || policyHolder == null || contractPaymentData == null || coverageAmount < 0 || contractNumber == null ||  contractNumber.isEmpty()) {
+        if(insuranceCompany == null || policyHolder == null || coverageAmount < 0 || contractNumber == null ||  contractNumber.isEmpty()) {
             throw new IllegalArgumentException("Invalid arguments");
         }
 
@@ -25,6 +26,7 @@ public abstract class AbstractContract {
         this.policyHolder = policyHolder;
         this.contractPaymentData = contractPaymentData;
         this.coverageAmount = coverageAmount;
+        this.isActive = true;
     }
 
     public String getContractNumber() {
@@ -43,11 +45,11 @@ public abstract class AbstractContract {
     }
 
     public boolean isActive() {
-        return isActive;
+        return this.isActive;
     }
 
     public void setInactive() {
-        isActive = false;
+        this.isActive = false;
     }
 
     public void setCoverageAmount(int coverageAmount) {
@@ -64,9 +66,19 @@ public abstract class AbstractContract {
 
     public void pay(int amount) {
 
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Payment amount must be positive");
+        }
+        PaymentHandler paymentHandler = this.insurer.getHandler();
+
+        if(this instanceof MasterVehicleContract) {
+            paymentHandler.pay((MasterVehicleContract) this, amount);
+        }else {
+            paymentHandler.pay((AbstractContract) this, amount);
+        }
     }
 
     public void updateBalance() {
-
+        insurer.chargePremiumOnContract(this);
     }
 }

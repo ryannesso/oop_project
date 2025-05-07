@@ -6,7 +6,7 @@ public enum PremiumPaymentFrequency {
     PremiumPaymentFrequency(int value) {
         this.monthsValue = value;
     }
-    public int getMonthsValue() {
+    public int getValueInMonths() {
         return monthsValue;
     }
 }

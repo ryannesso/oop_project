@@ -29,10 +29,10 @@ public class InsuranceCompany {
         this.handler = new PaymentHandler(contractHistory, this);
     }
     public LocalDateTime getCurrentTime() {
-        return currentTime;
+        return this.currentTime;
     }
     public void setCurrentTime(LocalDateTime currentTime) {
-        this.currentTime = currentTime;
+        this.currentTime = Objects.requireNonNull(currentTime);
     }
     public Set<AbstractContract> getContracts() {
         return contracts;
@@ -51,7 +51,7 @@ public class InsuranceCompany {
             }
         }
         double vehicleValue = vehicleToInsure.getOriginalValue();
-        int periods = 12 / proposedPaymentFrequency.getMonthsValue();
+        int periods = 12 / proposedPaymentFrequency.getValueInMonths();
         if(proposedPremium * periods < 0.02 * vehicleValue) {
             throw new IllegalArgumentException("Premium payment not enough");
         }
@@ -127,17 +127,11 @@ public class InsuranceCompany {
         }
     }
     public void chargePremiumOnContract(AbstractContract contract) {
-        while(contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime)) {
-            if(contract.getContractPaymentData().getNextPaymentTime().isEqual(currentTime) &&
-                    contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime)) {
+        while(contract.getContractPaymentData().getNextPaymentTime().isBefore(currentTime) || contract.getContractPaymentData().getNextPaymentTime().isEqual(currentTime)) {
                 int balance = contract.getContractPaymentData().getOutstandingBalance();
                 balance += contract.getContractPaymentData().getPremium();
-                contract.getContractPaymentData().setPremium(balance);
+                contract.getContractPaymentData().setOutstandingBalance(balance);
                 contract.getContractPaymentData().updateNextPaymentTime();
-                if(contract.getContractPaymentData().getNextPaymentTime().isAfter(currentTime)) {
-                    break;
-                }
-            }
         }
         //todo заменить получение ContractPaymentData из метода вызова на создание объекта
 

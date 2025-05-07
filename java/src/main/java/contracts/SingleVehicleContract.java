@@ -13,6 +13,9 @@ public class SingleVehicleContract extends AbstractVehicleContract {
         if(insuredVehicle == null || contractPaymentData == null) {
             throw new IllegalArgumentException("Invalid arguments");
         }
+        if(beneficiary != null && beneficiary.equals(policyHolder)) {
+            throw new IllegalArgumentException("Policy holder must be a legal person for MasterVehicleContract");
+        }
         this.insuredVehicle = insuredVehicle;
     }
 

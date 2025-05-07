@@ -25,25 +25,35 @@ public class MasterVehicleContract extends AbstractVehicleContract {
 
     @Override
     public boolean isActive() {
-        boolean ok = this.childContracts.stream().anyMatch(AbstractContract::isActive);
-        if(!ok) {
+        // 1. Проверяем базовую активность (флаг isActive)
+        if (!super.isActive()) {
             return false;
         }
-        return super.isActive();
+
+        // 2. Если нет дочерних контрактов - неактивен
+        if (this.childContracts.isEmpty()) {
+            return false;
+        }
+
+        // 3. Активен, если хотя бы один дочерний контракт активен
+        for (SingleVehicleContract child : this.childContracts) {
+            if (child.isActive()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void requestAdditionOfChildContract(SingleVehicleContract childContract) {
         childContracts.add(childContract);
     }
 
+    @Override
     public void setInactive() {
-        this.isActive = false;
-
-        for(SingleVehicleContract childContract : childContracts) {
-            childContract.setInactive();
-        }
+        super.setInactive(); // Деактивируем сам мастер-контракт
+        this.childContracts.forEach(AbstractContract::setInactive); // И все дочерние
     }
-
     //todo UML!!!!!!
 
     //todo откл подсказки

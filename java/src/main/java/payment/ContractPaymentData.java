@@ -20,8 +20,8 @@ public class ContractPaymentData {
         }
         this.premium = premium;
         this.premiumPaymentFrequency = frequency;
-        this.nextPaymentTime = nextPaymentTime;
-        this.outstandingBalance = outstandingBalance;
+        this.outstandingBalance = premium;
+        this.nextPaymentTime = nextPaymentTime.plusMonths(frequency.getValueInMonths());
     }
 
     public int getPremium() {
@@ -46,6 +46,6 @@ public class ContractPaymentData {
         return nextPaymentTime;
     }
     public void updateNextPaymentTime() {
-        nextPaymentTime = nextPaymentTime.plusMonths(premiumPaymentFrequency.getMonthsValue());
+        this.nextPaymentTime = this.nextPaymentTime.plusMonths(premiumPaymentFrequency.getValueInMonths());
     }
 }
